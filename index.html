@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="description" content="oever.art – A 1-Billion-Dollar-Worthy Digital Art Experience with Forward/Reverse Background Video" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>oever.art – Forward/Reverse Video, Text Menu</title>
+
+  <!-- Inline CSS -->
+  <style>
+    :root {
+      --color-background: #000000;
+      --color-foreground: #ffffff;
+      --color-accent: #ffd700;
+      --font-primary: 'Poppins', sans-serif;
+      --font-secondary: 'Playfair Display', serif;
+      --container-width: 1200px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+      background-color: var(--color-background);
+      color: var(--color-foreground);
+      font-family: var(--font-primary);
+    }
+
+    /* FULLSCREEN BACKGROUND VIDEO */
+    #background-video-container {
+      position: fixed; /* sits behind everything */
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1; /* behind main content */
+      overflow: hidden;
+    }
+    #background-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    /* HEADER */
+    header {
+      background-color: #111;
+      padding: 1rem 0;
+      z-index: 1;
+      position: relative;
+    }
+    .nav-bar {
+      width: 90%;
+      max-width: var(--container-width);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .branding {
+      font-family: var(--font-secondary);
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+    }
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .nav-links a:hover {
+      color: var(--color-accent);
+    }
+
+    /* HERO (Now the textual hero content is separate from the background video container) */
+    .hero-section {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative; /* to ensure content is above background */
+      z-index: 1; /* on top of video */
+    }
+    .hero-content {
+      max-width: 80%;
+      margin-top: 4rem; /* to not clash with header if needed */
+    }
+    .hero-title {
+      font-family: var(--font-secondary);
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .hero-subtitle {
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.85);
+    }
+    .cta-button {
+      background-color: var(--color-accent);
+      color: #000;
+      padding: 0.75rem 2rem;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: 500;
+    }
+    .cta-button:hover {
+      background-color: #fff68f;
+      transform: scale(1.05);
+    }
+
+    /* ABOUT SECTION */
+    #about {
+      padding: 3rem 1rem;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .section-title {
+      font-family: var(--font-secondary);
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .section-subtitle {
+      font-size: 1rem;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* GALLERY SECTION */
+    #gallery {
+      padding: 3rem 1rem;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .gallery-item {
+      background-color: #111;
+      border: 1px solid #333;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: auto;
+      transition: transform 0.3s;
+    }
+    .gallery-item:hover img {
+      transform: scale(1.05);
+    }
+
+    /* CUSTOM INQUIRY SECTION */
+    #custom-inquiry {
+      padding: 3rem 1rem;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .inquiry-form {
+      margin: 2rem auto 0;
+      max-width: 600px;
+      text-align: left;
+    }
+    .form-steps .step {
+      display: none;
+    }
+    .form-steps .step.active {
+      display: block;
+    }
+    .form-steps label {
+      display: block;
+      margin: 0.5rem 0 0.25rem;
+    }
+    .form-steps input[type="text"],
+    .form-steps input[type="email"],
+    .form-steps textarea,
+    .form-steps select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #555;
+      background-color: #222;
+      color: #fff;
+    }
+    .step-buttons {
+      display: flex;
+      justify-content: space-between;
+    }
+    .step-buttons button {
+      background-color: var(--color-accent);
+      color: #000;
+      border: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+    }
+
+    /* PARALLAX SECTION */
+    .parallax-section {
+      position: relative;
+      height: 50vh;
+      background: url('images1.jpg') no-repeat center center;
+      background-attachment: fixed;
+      background-size: cover;
+      margin: 2rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 1;
+    }
+    .parallax-section::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 0;
+    }
+    .parallax-content {
+      position: relative;
+      z-index: 1;
+      color: rgba(255,255,255,0.9);
+    }
+
+    /* FOOTER SECTION */
+    footer {
+      background-color: #111;
+      padding: 2rem 1rem;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .footer-text {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 0.5rem;
+    }
+    .social-links a {
+      margin: 0 0.4rem;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .social-links a:hover {
+      color: var(--color-accent);
+    }
+
+    /* REBATE PROMPT */
+    .rebate-section {
+      border: 2px dashed #666;
+      margin: 2rem auto;
+      padding: 1rem;
+      max-width: 700px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .rebate-section p {
+      margin: 0.5rem 0;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: rgba(255, 255, 255, 0.8);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- FULLSCREEN VIDEO CONTAINER -->
+  <div id="background-video-container">
+    <video 
+      id="background-video"
+      muted
+      playsinline
+      autoplay
+      preload="auto"
+      /* We don't use loop attribute, we handle looping manually in JS */
+    >
+      <source src="background.mp4" type="video/mp4" />
+      <!-- fallback content -->
+      Your browser does not support HTML5 video.
+    </video>
+  </div>
+
+  <!-- HEADER (Text-based menu) -->
+  <header>
+    <div class="nav-bar">
+      <div class="branding">oever.art</div>
+      <ul class="nav-links">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#custom-inquiry">Inquiries</a></li>
+        <li><a href="#footer">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section id="hero" class="hero-section">
+    <div class="hero-content">
+      <h2 class="hero-title">Welcome to oever.art</h2>
+      <p class="hero-subtitle">
+        Experience the seamless fusion of nature, fantasy, and digital artistry in breathtaking female portraits.
+      </p>
+      <button class="cta-button" onclick="scrollToSection('gallery')">Explore Collections</button>
+    </div>
+  </section>
+
+  <!-- ABOUT SECTION -->
+  <section id="about">
+    <h2 class="section-title">Meet the Visionary</h2>
+    <p class="section-subtitle">
+      Discover the story behind <strong>oever.art</strong>. Led by Floris van den Hoever, a digital artist 
+      combining modern tools (3D, Dash, Studio, Photoshop) with elements of nature and fantasy 
+      to produce truly captivating female portraits.
+    </p>
+  </section>
+
+  <!-- GALLERY SECTION -->
+  <section id="gallery">
+    <h2 class="section-title">Gallery</h2>
+    <p class="section-subtitle">
+      Browse an exclusive showcase of nature-inspired artworks. Enjoy interactive previews 
+      and infinite-scroll or carousel transitions for a truly engaging experience.
+    </p>
+    <div class="gallery-grid">
+      <div class="gallery-item">
+        <img src="images1.jpg" alt="Placeholder 1" />
+      </div>
+      <div class="gallery-item">
+        <img src="images2.jpg" alt="Placeholder 2" />
+      </div>
+      <div class="gallery-item">
+        <img src="images3.jpg" alt="Placeholder 3" />
+      </div>
+      <div class="gallery-item">
+        <img src="images4.jpg" alt="Placeholder 4" />
+      </div>
+    </div>
+  </section>
+
+  <!-- CUSTOM INQUIRY SECTION -->
+  <section id="custom-inquiry">
+    <h2 class="section-title">Commission Your Own Artwork</h2>
+    <p class="section-subtitle">
+      Let us bring your vision to life. Our multi-step inquiry form guides you 
+      through the process of requesting a personalized, nature-fantasy masterpiece.
+    </p>
+    <form class="inquiry-form" id="inquiryForm">
+      <div class="form-steps">
+        <!-- STEP 1 -->
+        <div class="step active">
+          <h3>Basic Details</h3>
+          <label for="name">Name</label>
+          <input type="text" id="name" placeholder="Your Name" required />
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="Your Email" required />
+          <button type="button" class="next-btn">Next</button>
+        </div>
+        <!-- STEP 2 -->
+        <div class="step">
+          <h3>Art Preferences</h3>
+          <label for="style">Preferred Style</label>
+          <select id="style">
+            <option value="fantasy">Fantasy</option>
+            <option value="nature">Nature</option>
+            <option value="abstract">Abstract</option>
+          </select>
+          <label for="details">Additional Details</label>
+          <textarea id="details" placeholder="Describe your vision..."></textarea>
+          <div class="step-buttons">
+            <button type="button" class="prev-btn">Back</button>
+            <button type="button" class="next-btn">Next</button>
+          </div>
+        </div>
+        <!-- STEP 3 -->
+        <div class="step">
+          <h3>Confirmation</h3>
+          <p>Review your inquiry and submit to receive a custom quote.</p>
+          <div class="step-buttons">
+            <button type="button" class="prev-btn">Back</button>
+            <button type="submit" class="submit-btn">Submit</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <!-- PARALLAX SECTION -->
+  <section class="parallax-section">
+    <div class="parallax-content">
+      <h2>Nature Meets Fantasy</h2>
+      <p>Immerse yourself in a world where digital art transcends reality.</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <p class="footer-text">
+      oever.art &copy; <span id="year"></span>. All Rights Reserved.
+    </p>
+    <p class="footer-text">Digital Art by Floris van den Hoever</p>
+    <div class="social-links">
+      <a href="#" rel="noopener">Instagram</a>|
+      <a href="#" rel="noopener">Facebook</a>|
+      <a href="#" rel="noopener">TikTok</a>
+    </div>
+    <p class="footer-text">
+      For inquiries, reach us at <a href="mailto:contact@oever.art" style="color: var(--color-accent); text-decoration: none;">
+      contact@oever.art</a>
+    </p>
+  </footer>
+
+  <!-- REBATE PROMPT -->
+  <section class="rebate-section">
+    <h3>Refine This Website Further</h3>
+    <p>
+      When refining text or sections, replace existing headers, paragraphs, or descriptions 
+      with updated content while preserving the text-based menu and overall structure.
+    </p>
+    <p>
+      <strong>Example:</strong> “Replace the About section heading with ‘Golden Fantasy’ while leaving 
+      the menu links untouched.”
+    </p>
+  </section>
+
+  <!-- Inline JS -->
+  <script>
+    // Smooth scroll helper
+    function scrollToSection(sectionId) {
+      const el = document.getElementById(sectionId);
+      if(el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Multi-step form logic
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      const steps = Array.from(document.querySelectorAll('.step'));
+      const nextBtns = document.querySelectorAll('.next-btn');
+      const prevBtns = document.querySelectorAll('.prev-btn');
+      const form = document.getElementById('inquiryForm');
+      let currentStep = 0;
+
+      nextBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          steps[currentStep].classList.remove('active');
+          currentStep = Math.min(currentStep + 1, steps.length - 1);
+          steps[currentStep].classList.add('active');
+        });
+      });
+
+      prevBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          steps[currentStep].classList.remove('active');
+          currentStep = Math.max(currentStep - 1, 0);
+          steps[currentStep].classList.add('active');
+        });
+      });
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Your inquiry has been submitted. Thank you!');
+        form.reset();
+        steps[currentStep].classList.remove('active');
+        currentStep = 0;
+        steps[currentStep].classList.add('active');
+      });
+    });
+  </script>
+
+  <!-- Forward/Reverse Playback for background.mp4 -->
+  <script>
+    (function(){
+      const video = document.getElementById('background-video');
+      if(!video) return;
+
+      // Wait for metadata to know duration
+      video.addEventListener('loadedmetadata', () => {
+        // Start normal forward playback
+        video.playbackRate = 1.0;
+      });
+
+      // timeupdate event to catch boundary conditions
+      video.addEventListener('timeupdate', () => {
+        if(video.playbackRate > 0 && video.currentTime >= video.duration) {
+          // reached end while going forward
+          video.currentTime = video.duration;
+          video.playbackRate = -1.0; // reverse
+        } else if(video.playbackRate < 0 && video.currentTime <= 0) {
+          // reached start while going backward
+          video.currentTime = 0;
+          video.playbackRate = 1.0; // forward again
+        }
+      });
+
+      // ended event (for some browsers that might not do timeupdate exactly at the end)
+      video.addEventListener('ended', () => {
+        // If ended going forward
+        if(video.playbackRate > 0) {
+          video.currentTime = video.duration;
+          video.playbackRate = -1.0;
+          video.play();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
